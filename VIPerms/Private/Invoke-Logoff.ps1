@@ -1,20 +1,30 @@
 function Invoke-Logoff {
     <#
     .SYNOPSIS
-    Logout of the authenticated vCenter MOB web session and clear up the global variable VIPerms.
+    Logout of the authenticated vCenter MOB web session and clear up the Script variable VIPerms.
     #>
 
-
-    try {
-        $ProPref = $ProgressPreference
+    BEGIN {
+        $ProPref            = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
-        $Uri = "https://$($Global:VIPerms.Server)/invsvc/mob3/logout"
-        $Res = Invoke-WebRequest -Uri $Uri -WebSession $Global:VIPerms.WebSession -Method GET
-        $Global:VIPerms.WebSession = $null
-        $Global:VIPerms.SessionNonce = $null
+    } #BEGIN
+
+    PROCESS {
+        try {
+            [String]$Uri = "https://$($Script:VIPerms.Server)/invsvc/mob3/logout"
+            $Res         = Invoke-WebRequest -Uri $Uri -WebSession $Script:VIPerms.WebSession -Method GET
+            $Script::VIPerms.WebSession   = $null
+            $Script::VIPerms.SessionNonce = $null
+    
+        } #try
+        catch {
+            $Err = $_
+            throw $Err
+        } #catch
+    } #PROCESS
+
+    END {
         $ProgressPreference = $ProPref
-    } catch {
-        $Err = $_
-        throw $Err
-    }
-}
+    } #END
+
+} #function Invoke-Logoff
