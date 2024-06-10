@@ -3,7 +3,7 @@ function Invoke-Logoff {
     .SYNOPSIS
     Logout of the authenticated vCenter MOB web session and clear up the Script variable VIPerms.
     #>
-
+    
     BEGIN {
         $ProPref            = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
