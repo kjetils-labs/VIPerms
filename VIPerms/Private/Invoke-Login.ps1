@@ -45,7 +45,8 @@ function Invoke-Login {
 
         } #try
         catch {
-            $Err = $_
+            $Err                = $_
+            $ProgressPreference = $ProPref
             throw $Err
         } #catch
     } #PROCESS
