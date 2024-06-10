@@ -19,6 +19,7 @@ function Invoke-Logoff {
         } #try
         catch {
             $Err = $_
+            $ProgressPreference = $ProPref
             throw $Err
         } #catch
     } #PROCESS
