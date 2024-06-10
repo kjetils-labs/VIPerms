@@ -83,7 +83,8 @@ function Connect-VIMobServer {
 
         } #try
         catch {
-            $Err = $_
+            $Err                = $_
+            $ProgressPreference = $ProPref
             throw $Err
         } #catch
 
