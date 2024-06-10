@@ -2,25 +2,26 @@ function Set-CertPolicy {
     <#
     .SYNOPSIS
     Ignore SSL verification.
-    
+
     .DESCRIPTION
     Using a custom .NET type, override SSL verification policies.
 
     #>
 
     param (
-        [Switch] $SkipCertificateCheck,
-        [Switch] $ResetToDefault
+        [Switch]$SkipCertificateCheck
     )
 
     try {
         if ($SkipCertificateCheck) {
-            try {
-                [Net.ServicePointManager]::SecurityProtocol = "Tls12, Tls11, Tls"
-                [Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-            } catch {
-                $Err = $_
-                if ($Err.Exception.Message.StartsWith("Cannot find type [TrustAllCertsPolicy]")) {
+            if ($PSVersionTable.PSEdition -eq 'Core') {
+                # Invoke-restmethod provide Skip certcheck param in powershell core
+                $Script:PSDefaultParameterValues = @{
+                    "invoke-restmethod:SkipCertificateCheck" = $true
+                    "invoke-webrequest:SkipCertificateCheck" = $true
+                } #$Script:PSDefaultParameterValues
+            } #if
+            else {
                     Add-Type -TypeDefinition  @"
                     using System.Net;
                     using System.Security.Cryptography.X509Certificates;
@@ -32,16 +33,12 @@ function Set-CertPolicy {
                         }
                     }
 "@
-                    [Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-                } else {
-                    throw $Err
-                }
-            }
-        } else {
-            [Net.ServicePointManager]::CertificatePolicy = $null
-        }
-    } catch {
+                [Net.ServicePointManager]::CertificatePolicy = [TrustAllCertsPolicy]::new()
+            } #else
+        } #if $SkipCertificateCheck
+    } #try
+    catch {
         $Err = $_
         throw $Err
-    }
-}
+    } #catch
+} #function Set-CertPolicy
