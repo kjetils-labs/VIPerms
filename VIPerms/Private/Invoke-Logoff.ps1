@@ -1,7 +1,7 @@
 function Invoke-Logoff {
     <#
-    .SYNOPSIS
-    Logout of the authenticated vCenter MOB web session and clear up the Script variable VIPerms.
+        .SYNOPSIS
+            Logout of the authenticated vCenter MOB web session and clear up the Script variable VIPerms.
     #>
 
     BEGIN {
@@ -16,8 +16,8 @@ function Invoke-Logoff {
         try {
             [String]$Uri = "https://$($Script:VIPerms.Server)/invsvc/mob3/logout"
             [Void](Invoke-WebRequest -Uri $Uri -WebSession $Script:VIPerms.WebSession -Method GET)
-            $Script::VIPerms.WebSession   = $null
-            $Script::VIPerms.SessionNonce = $null
+            $Script:VIPerms.WebSession   = $null
+            $Script:VIPerms.SessionNonce = $null
 
         } #try
         catch {
